@@ -4,10 +4,10 @@ namespace Laravel\Coral\Route;
 
 use Attribute;
 use Closure;
-use Laravel\Coral\Attribute\RequestAttribute;
-use Laravel\Coral\Exceptions\ValidateException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Coral\Attribute\RequestAttribute;
+use Laravel\Coral\Exceptions\ValidateException;
 use Symfony\Component\HttpFoundation\Response;
 
 #[Attribute(Attribute::TARGET_METHOD)]

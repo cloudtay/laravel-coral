@@ -16,10 +16,10 @@ class RateLimitExceededException extends TooManyRequestsHttpException
      * @param array $headers
      */
     public function __construct(
-        string $message = 'Too Many Requests',
+        string    $message = 'Too Many Requests',
         Throwable $previous = null,
-        int $retryAfter = 60,
-        array $headers = []
+        int       $retryAfter = 60,
+        array     $headers = []
     ) {
         $headers = array_merge(['Retry-After' => $retryAfter], $headers);
         parent::__construct($retryAfter, $message, $previous, 429, $headers);

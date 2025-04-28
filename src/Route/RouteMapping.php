@@ -3,10 +3,12 @@
 namespace Laravel\Coral\Route;
 
 use Attribute;
-use Laravel\Coral\Attribute\BuildAttribute;
 use Illuminate\Support\Facades\Route;
+use Laravel\Coral\Attribute\BuildAttribute;
+use Laravel\Coral\Attribute\Middleware;
 
 use function is_array;
+use function array_merge;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class RouteMapping implements BuildAttribute
@@ -46,7 +48,9 @@ class RouteMapping implements BuildAttribute
         );
 
         $route->setWheres($this->wheres);
-        $route->middleware($this->middlewares);
+        $route->middleware(array_merge($this->middlewares, [
+            Middleware::class
+        ]));
         return true;
     }
 }

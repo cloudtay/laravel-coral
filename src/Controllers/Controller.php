@@ -2,9 +2,9 @@
 
 namespace Laravel\Coral\Controllers;
 
-use Laravel\Coral\Provider;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\View\View;
+use Laravel\Coral\Provider;
 
 use function app;
 use function array_merge;

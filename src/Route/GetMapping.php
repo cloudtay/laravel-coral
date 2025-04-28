@@ -10,8 +10,8 @@ class GetMapping extends RouteMapping
     /**
      * @param string|null $route
      * @param string|null $name
-     * @param array       $wheres
-     * @param array       $middlewares
+     * @param array $wheres
+     * @param array $middlewares
      */
     public function __construct(
         public string|null $route = '',

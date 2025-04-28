@@ -2,8 +2,8 @@
 
 namespace Laravel\Coral\Exceptions;
 
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class ValidateException extends TooManyRequestsHttpException
+class ValidateException extends BadRequestHttpException
 {
 }

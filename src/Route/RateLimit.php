@@ -4,10 +4,10 @@ namespace Laravel\Coral\Route;
 
 use Attribute;
 use Closure;
-use Laravel\Coral\Attribute\RequestAttribute;
-use Laravel\Coral\Exceptions\RateLimitExceededException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Laravel\Coral\Attribute\RequestAttribute;
+use Laravel\Coral\Exceptions\RateLimitExceededException;
 use Symfony\Component\HttpFoundation\Response;
 
 use function implode;

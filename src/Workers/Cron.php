@@ -8,24 +8,24 @@ use Ripple\Worker;
 use Ripple\Worker\Manager;
 use Throwable;
 
-use function Co\go;
-use function call_user_func;
-use function date;
-use function sprintf;
-use function time;
-use function strtotime;
 use function array_keys;
 use function array_merge;
 use function array_slice;
 use function array_unshift;
+use function call_user_func;
+use function Co\go;
 use function count;
+use function date;
+use function date_default_timezone_get;
+use function date_default_timezone_set;
 use function explode;
 use function is_numeric;
 use function microtime;
+use function sprintf;
+use function strtotime;
+use function time;
 use function trim;
 use function uniqid;
-use function date_default_timezone_get;
-use function date_default_timezone_set;
 
 class Cron extends Worker
 {
@@ -72,6 +72,63 @@ class Cron extends Worker
 
         self::calculateNextRunTime($id);
         return $id;
+    }
+
+    /**
+     * 计算下次运行时间
+     *
+     * @param string $id 任务ID
+     * @return void
+     */
+    protected static function calculateNextRunTime(string $id): void
+    {
+        if (!isset(self::$tasks[$id])) {
+            return;
+        }
+
+        $task = &self::$tasks[$id];
+        $expression = $task['expression'];
+        $timezone = $task['options']['timezone'];
+
+        // 设置当前时区
+        $currentTz = date_default_timezone_get();
+        date_default_timezone_set($timezone);
+
+        if (is_numeric($expression)) {
+            $nextRun = time() + (int)$expression;
+        } else {
+            $nextRun = self::getNextRunTimeFromCronExpression($expression);
+        }
+
+        $task['options']['next_run'] = $nextRun;
+
+        // 恢复原来的时区
+        date_default_timezone_set($currentTz);
+    }
+
+    /**
+     * 从Cron表达式计算下次运行时间
+     *
+     * @param string $expression Cron表达式
+     * @return int 下次运行时间戳
+     */
+    protected static function getNextRunTimeFromCronExpression(string $expression): int
+    {
+        $parts = explode(' ', trim($expression));
+
+        if (count($parts) !== 5) {
+            return match ($expression) {
+                '@yearly', '@annually' => strtotime('next year'),
+                '@monthly' => strtotime('first day of next month midnight'),
+                '@weekly' => strtotime('next monday'),
+                '@daily', '@midnight' => strtotime('tomorrow midnight'),
+                '@hourly' => strtotime('next hour'),
+                default => strtotime('next minute'),
+            };
+        }
+
+        // 简化版本 - 只获取下一分钟的时间
+        return strtotime('+1 minute');
     }
 
     /**
@@ -261,63 +318,6 @@ class Cron extends Worker
                 );
             }
         });
-    }
-
-    /**
-     * 计算下次运行时间
-     *
-     * @param string $id 任务ID
-     * @return void
-     */
-    protected static function calculateNextRunTime(string $id): void
-    {
-        if (!isset(self::$tasks[$id])) {
-            return;
-        }
-
-        $task = &self::$tasks[$id];
-        $expression = $task['expression'];
-        $timezone = $task['options']['timezone'];
-
-        // 设置当前时区
-        $currentTz = date_default_timezone_get();
-        date_default_timezone_set($timezone);
-
-        if (is_numeric($expression)) {
-            $nextRun = time() + (int)$expression;
-        } else {
-            $nextRun = self::getNextRunTimeFromCronExpression($expression);
-        }
-
-        $task['options']['next_run'] = $nextRun;
-
-        // 恢复原来的时区
-        date_default_timezone_set($currentTz);
-    }
-
-    /**
-     * 从Cron表达式计算下次运行时间
-     *
-     * @param string $expression Cron表达式
-     * @return int 下次运行时间戳
-     */
-    protected static function getNextRunTimeFromCronExpression(string $expression): int
-    {
-        $parts = explode(' ', trim($expression));
-
-        if (count($parts) !== 5) {
-            return match ($expression) {
-                '@yearly', '@annually' => strtotime('next year'),
-                '@monthly' => strtotime('first day of next month midnight'),
-                '@weekly' => strtotime('next monday'),
-                '@daily', '@midnight' => strtotime('tomorrow midnight'),
-                '@hourly' => strtotime('next hour'),
-                default => strtotime('next minute'),
-            };
-        }
-
-        // 简化版本 - 只获取下一分钟的时间
-        return strtotime('+1 minute');
     }
 
     /**

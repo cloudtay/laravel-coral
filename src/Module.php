@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Coral\Attribute\Middleware;
 use Laravel\Coral\Controllers\Controller;
 use Laravel\Coral\Route\RouteMapping;
 use Laravel\Coral\Route\RoutePrefix;
@@ -139,34 +138,6 @@ class Module extends ServiceProvider
     }
 
     /**
-     * @param array $controllers
-     * @return void
-     */
-    protected function registerControllers(array $controllers): void
-    {
-        try {
-            $kernelModule = $this->app->make(Provider::class);
-
-            foreach ($controllers as $class) {
-                try {
-                    if (is_subclass_of($class, Controller::class)) {
-                        $this->controllerReflections[$class] = new ReflectionClass($class);
-                        $kernelModule->registerController($class, $this->moduleName);
-                    }
-                } catch (Throwable $e) {
-                    Log::warning("Failed to register controller: {$class}", [
-                        'exception' => $e->getMessage()
-                    ]);
-                }
-            }
-        } catch (Throwable $e) {
-            Log::error("Failed to register controllers", [
-                'exception' => $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
      * @param string $root
      * @param string $namespace
      * @return array
@@ -208,6 +179,34 @@ class Module extends ServiceProvider
     }
 
     /**
+     * @param array $controllers
+     * @return void
+     */
+    protected function registerControllers(array $controllers): void
+    {
+        try {
+            $kernelModule = $this->app->make(Provider::class);
+
+            foreach ($controllers as $class) {
+                try {
+                    if (is_subclass_of($class, Controller::class)) {
+                        $this->controllerReflections[$class] = new ReflectionClass($class);
+                        $kernelModule->registerController($class, $this->moduleName);
+                    }
+                } catch (Throwable $e) {
+                    Log::warning("Failed to register controller: {$class}", [
+                        'exception' => $e->getMessage()
+                    ]);
+                }
+            }
+        } catch (Throwable $e) {
+            Log::error("Failed to register controllers", [
+                'exception' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
      * @param string $controllerClass
      * @param string $module
      * @return void
@@ -234,12 +233,7 @@ class Module extends ServiceProvider
      */
     protected function registerRoutes(ReflectionClass $classReflection): void
     {
-        $routeAttributes = [
-            'middleware' => [
-                'web',
-                Middleware::class,
-            ]
-        ];
+        $routeAttributes = [];
 
         foreach ($classReflection->getAttributes() as $controllerAttribute) {
             $controllerAttributeObject = $controllerAttribute->newInstance();
