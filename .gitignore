@@ -1,0 +1,7 @@
+laravel-coral.iml
+.idea
+.vscode
+.cursor
+
+/vendor/
+.php-cs-fixer.cache
