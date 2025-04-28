@@ -234,30 +234,31 @@ class Module extends ServiceProvider
      */
     protected function registerRoutes(ReflectionClass $classReflection): void
     {
+        $routeAttributes = [
+            'middleware' => [
+                'web',
+                Middleware::class,
+            ]
+        ];
+
         foreach ($classReflection->getAttributes() as $controllerAttribute) {
-            $routeAttributes = [
-                'middleware' => [
-                    'web',
-                    Middleware::class,
-                ]
-            ];
             $controllerAttributeObject = $controllerAttribute->newInstance();
             if ($controllerAttributeObject instanceof RoutePrefix) {
-                $routeAttributes['prefix'] = $controllerAttributeObject->route;
+                $routeAttributes['prefix'] = $controllerAttributeObject->prefix;
             }
+        }
 
-            Route::group($routeAttributes, static function () use ($classReflection) {
-                foreach ($classReflection->getMethods() as $method) {
-                    if ($method->getModifiers() & ReflectionMethod::IS_PUBLIC) {
-                        foreach ($method->getAttributes() as $methodAttribute) {
-                            $methodAttributeObject = $methodAttribute->newInstance();
-                            if ($methodAttributeObject instanceof RouteMapping) {
-                                $methodAttributeObject->handle([$classReflection->getName(), $method->getName()]);
-                            }
+        Route::group($routeAttributes, static function () use ($classReflection) {
+            foreach ($classReflection->getMethods() as $method) {
+                if ($method->getModifiers() & ReflectionMethod::IS_PUBLIC) {
+                    foreach ($method->getAttributes() as $methodAttribute) {
+                        $methodAttributeObject = $methodAttribute->newInstance();
+                        if ($methodAttributeObject instanceof RouteMapping) {
+                            $methodAttributeObject->handle([$classReflection->getName(), $method->getName()]);
                         }
                     }
                 }
-            });
-        }
+            }
+        });
     }
 }
