@@ -9,6 +9,9 @@ use function app_path;
 use function class_exists;
 use function is_dir;
 use function scandir;
+use function file_exists;
+
+use const DIRECTORY_SEPARATOR;
 
 class Provider extends Module
 {
@@ -57,6 +60,12 @@ class Provider extends Module
             if ($module === '.' || $module === '..') {
                 continue;
             }
+
+            $ignoreFile = $modulesPath . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . '.ignore';
+            if (file_exists($ignoreFile)) {
+                continue;
+            }
+
             $moduleList[] = $module;
         }
         return $moduleList;
