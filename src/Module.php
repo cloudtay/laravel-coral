@@ -26,6 +26,7 @@ use function pathinfo;
 use function scandir;
 use function str_starts_with;
 use function strtolower;
+use function file_exists;
 
 use const DIRECTORY_SEPARATOR;
 use const PATHINFO_DIRNAME;
@@ -152,6 +153,12 @@ class Module extends ServiceProvider
 
         $files = scandir($root);
         if ($files === false) {
+            return $classList;
+        }
+
+        // Check for .ignore file to skip scanning
+        $ignoreFile = $root . DIRECTORY_SEPARATOR . '.ignore';
+        if (file_exists($ignoreFile)) {
             return $classList;
         }
 
