@@ -255,7 +255,7 @@ class Module extends ServiceProvider
                     foreach ($method->getAttributes() as $methodAttribute) {
                         $methodAttributeObject = $methodAttribute->newInstance();
                         if ($methodAttributeObject instanceof RouteMapping) {
-                            $methodAttributeObject->handle([$classReflection->getName(), $method->getName()]);
+                            $methodAttributeObject->handle($classReflection, $method);
                         }
                     }
                 }

@@ -7,14 +7,10 @@ use Illuminate\View\View;
 use Laravel\Coral\Provider;
 
 use function app;
-use function array_merge;
 use function method_exists;
 
 class Controller
 {
-    /*** @var array */
-    protected array $assign = [];
-
     /*** @var string */
     protected string $moduleName;
 
@@ -65,29 +61,15 @@ class Controller
     }
 
     /**
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    protected function assign(string $key, mixed $value): void
-    {
-        $this->assign[$key] = $value;
-    }
-
-    /**
      * @param string $template
      * @param array|null $data
      * @return View
      */
     protected function fetch(string $template, array $data = null): View
     {
-        if ($data) {
-            $this->assign = array_merge($this->assign, $data);
-        }
-
         return \Illuminate\Support\Facades\View::make(
-            "{$this->moduleName}::{$template}",
-            $this->assign
+            $this->getViewName($template),
+            $data
         );
     }
 }

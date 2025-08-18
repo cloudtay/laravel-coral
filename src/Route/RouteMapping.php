@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Coral\Attribute\BuildAttribute;
 use Laravel\Coral\Attribute\Middleware;
 
+use ReflectionClass;
+use ReflectionMethod;
 use function is_array;
 use function array_merge;
 
@@ -35,7 +37,12 @@ class RouteMapping implements BuildAttribute
      */
     public function handle(...$params): true
     {
-        $action = $params[0];
+        /**
+         * @var ReflectionClass $classReflection
+         * @var ReflectionMethod $methodReflection
+         */
+        $classReflection = $params[0];
+        $methodReflection = $params[1];
 
         $methods = is_array($this->method)
             ? $this->method
@@ -44,8 +51,11 @@ class RouteMapping implements BuildAttribute
         $route = Route::match(
             $methods,
             $this->route,
-            $action
-        );
+            [$classReflection->getName(),$methodReflection->getName()]
+        )->defaults('reflections', [
+            'class' => $classReflection,
+            'method' => $methodReflection,
+        ]);
 
         $route->setWheres($this->wheres);
         $route->middleware(array_merge($this->middlewares, [
