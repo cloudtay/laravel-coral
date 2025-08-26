@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Coral\Attribute\RequestAttribute;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Transaction implements RequestAttribute
@@ -16,6 +17,7 @@ class Transaction implements RequestAttribute
      * @param Request $request
      * @param Closure $next
      * @return Response
+     * @throws Throwable
      */
     public function handle(Request $request, Closure $next): Response
     {

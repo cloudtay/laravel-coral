@@ -5,10 +5,10 @@ namespace Laravel\Coral\Route;
 use Attribute;
 use Illuminate\Support\Facades\Route;
 use Laravel\Coral\Attribute\BuildAttribute;
-use Laravel\Coral\Attribute\Middleware;
-
+use Laravel\Coral\Attribute\GlobalMiddleware;
 use ReflectionClass;
 use ReflectionMethod;
+
 use function is_array;
 use function array_merge;
 
@@ -52,15 +52,10 @@ class RouteMapping implements BuildAttribute
             $methods,
             $this->route,
             [$classReflection->getName(),$methodReflection->getName()]
-        )->defaults('reflections', [
-            'class' => $classReflection,
-            'method' => $methodReflection,
-        ]);
+        );
 
         $route->setWheres($this->wheres);
-        $route->middleware(array_merge($this->middlewares, [
-            Middleware::class
-        ]));
+        $route->middleware($this->middlewares);
         return true;
     }
 }

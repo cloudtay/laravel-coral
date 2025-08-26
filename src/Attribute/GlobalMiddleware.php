@@ -14,7 +14,7 @@ use function array_reverse;
 use function is_subclass_of;
 use function method_exists;
 
-class Middleware
+class GlobalMiddleware
 {
     /**
      * @param Request $request
@@ -34,18 +34,18 @@ class Middleware
     protected function buildPipeline(Request $request, Closure $next): Closure
     {
         $middlewares = $this->resolveMiddlewares($request);
-        $highPriority = [];
+        $prepends = [];
         $normalPriority = [];
 
         foreach ($middlewares as $middleware) {
-            if ($middleware->highPriority ?? false) {
-                $highPriority[] = $middleware;
+            if ($middleware->prepend ?? false) {
+                $prepends[] = $middleware;
             } else {
                 $normalPriority[] = $middleware;
             }
         }
 
-        $sortedMiddlewares = array_merge($highPriority, $normalPriority);
+        $sortedMiddlewares = array_merge($prepends, $normalPriority);
         foreach (array_reverse($sortedMiddlewares) as $middleware) {
             $next = static function (Request $request) use ($middleware, $next): Response {
                 return $middleware->handle($request, $next);

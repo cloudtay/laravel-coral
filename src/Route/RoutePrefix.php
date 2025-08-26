@@ -6,13 +6,13 @@ use Attribute;
 use Laravel\Coral\Attribute\ReadonlyAttribute;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
-class RoutePrefix implements ReadonlyAttribute
+readonly class RoutePrefix implements ReadonlyAttribute
 {
     /**
      * @param string $prefix
      */
     public function __construct(
-        public readonly string $prefix = ''
+        public string $prefix = ''
     ) {
     }
 }

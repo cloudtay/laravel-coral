@@ -22,12 +22,10 @@ class Attribute implements RequestAttribute
 {
     /**
      * @param string $middlewareClass
-     * @param bool $highPriority
+     * @param bool $prepend
      */
-    public function __construct(
-        public string $middlewareClass,
-        public bool   $highPriority = false
-    ) {
+    public function __construct(public string $middlewareClass, public bool $prepend = false)
+    {
     }
 
     /**

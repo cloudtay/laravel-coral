@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Coral\Attribute\GlobalMiddleware;
 use Laravel\Coral\Controllers\Controller;
 use Laravel\Coral\Route\RouteMapping;
 use Laravel\Coral\Route\RoutePrefix;
@@ -240,7 +241,9 @@ class Module extends ServiceProvider
      */
     protected function registerRoutes(ReflectionClass $classReflection): void
     {
-        $routeAttributes = [];
+        $routeAttributes = [
+            'middleware' => GlobalMiddleware::class
+        ];
 
         foreach ($classReflection->getAttributes() as $controllerAttribute) {
             $controllerAttributeObject = $controllerAttribute->newInstance();

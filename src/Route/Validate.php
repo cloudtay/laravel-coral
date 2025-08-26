@@ -18,12 +18,14 @@ class Validate implements RequestAttribute
      * @param array $messages
      * @param array $attributes
      * @param string $source
+     * @param bool $autocomplete
      */
     public function __construct(
         public array  $rules = [],
         public array  $messages = [],
         public array  $attributes = [],
-        public string $source = 'all'
+        public string $source = 'all',
+        public bool $autocomplete = true
     ) {
     }
 
@@ -48,10 +50,11 @@ class Validate implements RequestAttribute
             $this->attributes
         );
 
-        if ($validator->fails()) {
+        if ($this->autocomplete && $validator->fails()) {
             throw new ValidateException($validator->errors()->first());
         }
 
+        $request->route()->setParameter(\Illuminate\Validation\Validator::class, $validator);
         return $next($request);
     }
 }
