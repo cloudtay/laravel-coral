@@ -3,9 +3,8 @@
 namespace Laravel\Coral\Workers;
 
 use Closure;
-use Ripple\Utils\Output;
+use Ripple\Runtime\Support\Stdin;
 use Ripple\Worker;
-use Ripple\Worker\Manager;
 use Throwable;
 
 use function array_keys;
@@ -288,8 +287,8 @@ class Cron extends Worker
                 self::$history[$historyIndex]['status'] = 'success';
                 self::$history[$historyIndex]['runtime'] = $runtime;
 
-                Output::info(
-                    '[cron]',
+                Stdin::println(
+                    '[cron]'.
                     sprintf(
                         '[%s] Task "%s" completed successfully in %.4f seconds',
                         date('Y/m/d H:i:s'),
@@ -306,8 +305,8 @@ class Cron extends Worker
                 self::$history[$historyIndex]['message'] = $exception->getMessage();
                 self::$history[$historyIndex]['runtime'] = $runtime;
 
-                Output::error(
-                    '[cron]',
+                Stdin::println(
+                    '[cron]'.
                     sprintf(
                         '[%s] Task "%s" failed: %s (%.4f seconds)',
                         date('Y/m/d H:i:s'),
@@ -321,12 +320,11 @@ class Cron extends Worker
     }
 
     /**
-     * @param Manager $manager
      * @return void
      */
-    public function register(Manager $manager): void
+    public function register(): void
     {
-        Output::info('[Coral]', 'Cron system registered successfully!');
+        Stdin::println('[Coral] Cron system registered successfully!');
     }
 
     /**
@@ -338,6 +336,6 @@ class Cron extends Worker
             self::calculateNextRunTime($id);
         }
 
-        Output::info('[Coral]', 'Cron system reloaded!');
+        Stdin::println('[Coral] Cron system reloaded!');
     }
 }

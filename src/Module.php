@@ -15,11 +15,11 @@ use Laravel\Coral\Route\RoutePrefix;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
+use Ripple\Process;
 use Ripple\Worker\Manager;
 use Throwable;
 
 use function class_exists;
-use function Co\forked;
 use function get_class;
 use function is_dir;
 use function is_subclass_of;
@@ -136,7 +136,7 @@ class Module extends ServiceProvider
             $pendingControllers[] = $class;
         }
 
-        forked(fn () => $this->registerControllers($pendingControllers));
+        Process::forked(fn () => $this->registerControllers($pendingControllers));
     }
 
     /**
