@@ -118,12 +118,12 @@ class Module extends ServiceProvider
         }
 
         foreach ($classes as $class) {
-            if (str_starts_with($class, "App\\Modules\\{$this->moduleName}\\Commands\\")) {
+            if (str_starts_with($class, "{$this->moduleNamespace}\\Commands\\")) {
                 $this->commands([$class]);
                 continue;
             }
 
-            if (str_starts_with($class, "App\\Modules\\{$this->moduleName}\\Workers\\")) {
+            if (str_starts_with($class, "{$this->moduleNamespace}\\Workers\\")) {
                 try {
                     $manager->add($this->app->make($class));
                 } catch (BindingResolutionException $e) {
