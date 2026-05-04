@@ -2,6 +2,7 @@
 
 namespace Laravel\Coral;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Application;
 use Ripple\Worker\Manager;
 
@@ -38,6 +39,7 @@ class Provider extends Module
 
     /**
      * @return void
+     * @throws BindingResolutionException
      */
     public function register(): void
     {
@@ -67,6 +69,7 @@ class Provider extends Module
     }
 
     /**
+     * @param string|null $modulesPath
      * @return array
      */
     public function scanModules(?string $modulesPath = null): array
@@ -99,6 +102,7 @@ class Provider extends Module
 
     /**
      * @return array<int, array{path: string, namespace: string}>
+     * @throws BindingResolutionException
      */
     protected function moduleLayers(): array
     {
