@@ -14,7 +14,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "cloudtay/laravel-ripple": "^1.0"
+        "cloudtay/laravel-ripple": "^2.0"
     },
     "require-dev": {
         "laravel/framework": "^12.0",
